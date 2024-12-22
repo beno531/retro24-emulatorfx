@@ -1,0 +1,115 @@
+package de.ostfalia.retro24emulatorfx;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+public class Loader {
+    private Memory memory;
+
+    public void connectMemory(Memory memory) {
+        this.memory = memory;
+    }
+
+    public void writeProgram(int[] program) {
+
+        int counter = 0X0100;
+
+        for (int val : program) {
+            memory.write(counter, val);
+            counter++;
+        }
+    }
+
+    public void writeProgram(String filePath) {
+
+        File file = new File(filePath);
+
+        try {
+
+            if (!file.exists() || !file.isFile()) {
+                throw new IOException("Datei nicht gefunden: " + filePath);
+            }
+
+        } catch (IOException e) {
+            System.err.println("Fehler beim Laden der Datei: " + e.getMessage());
+        }
+
+        try (FileInputStream fis = new FileInputStream(file)) {
+            byte[] byteArray = fis.readAllBytes();
+
+            // Konvertiere byte[] zu int[]
+            int[] intArray = new int[byteArray.length];
+            for (int i = 0; i < byteArray.length; i++) {
+                intArray[i] = byteArray[i] & 0xFF; // Byte zu unsigned Int konvertieren
+            }
+
+            writeProgram(intArray);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void loadStartProgramm(){
+
+        memory.setTitle();
+
+        int[] program = {
+                0x17, 0x01, 0x25,
+                0x01, 0x0A, 0x00, 0x13,
+
+                0x17, 0x55, // BLAU
+                //0x01, 0xE8, 0xE0, 0x12,
+                0x01, 0xE9, 0xE0, 0x12,
+                0x01, 0xEA, 0xE0, 0x12,
+                0x01, 0xEB, 0xE0, 0x12,
+                0x01, 0xEC, 0xE0, 0x12,
+                0x01, 0xED, 0xE0, 0x12,
+                0x17, 0x54,
+                0x01, 0xEE, 0xE0, 0x12,
+                //0x01, 0x9F, 0xE0, 0x12,
+
+                0x17, 0x2A,
+               // 0x01, 0x98, 0xF0, 0x12,
+                0x01, 0xE9, 0xF0, 0x12,
+                0x17, 0xAA,
+                0x01, 0xEA, 0xF0, 0x12,
+                0x01, 0xEB, 0xF0, 0x12,
+                0x01, 0xEC, 0xF0, 0x12,
+                0x01, 0xED, 0xF0, 0x12,
+                0x01, 0xEE, 0xF0, 0x12,
+                //0x01, 0x9F, 0xF0, 0x12,
+
+                0x01, 0x0A, 0x00, 0x13,
+
+                0x17, 0x2A, // SCHWARZ
+                //0x01, 0x98, 0xE0, 0x12,
+                0x01, 0xE9, 0xE0, 0x12,
+                0x17, 0xAA,
+                0x01, 0xEA, 0xE0, 0x12,
+                0x01, 0xEB, 0xE0, 0x12,
+                0x01, 0xEC, 0xE0, 0x12,
+                0x01, 0xED, 0xE0, 0x12,
+                0x01, 0xEE, 0xE0, 0x12,
+                //0x01, 0x9F, 0xE0, 0x12,
+
+                0x17, 0x55,
+                //0x01, 0x98, 0xF0, 0x12,
+                0x01, 0xE9, 0xF0, 0x12,
+                0x01, 0xEA, 0xF0, 0x12,
+                0x01, 0xEB, 0xF0, 0x12,
+                0x01, 0xEC, 0xF0, 0x12,
+                0x01, 0xED, 0xF0, 0x12,
+                0x17, 0x54,
+                0x01, 0xEE, 0xF0, 0x12,
+                //0x01, 0x9F, 0xF0, 0x12,
+
+                0x01, 0x0A, 0x00, 0x13,
+
+                0x01, 0x07, 0x01,
+                0x11
+        };
+
+        writeProgram(program);
+    }
+}

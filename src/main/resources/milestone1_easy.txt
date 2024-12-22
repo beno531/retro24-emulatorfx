@@ -1,0 +1,22 @@
+; Summe der ungeraden Zahlen von 7 bis 17 
+; Ergebnis steht am Ende im Speicher an Adresse $011A.
+
+.base $0100               ; Fester Programmstart nach Reset
+
+          MR0, $00        ; 
+          C01             ; R1 = 0
+          MR0, $11        ; 
+          C02             ; R2 = 17
+          MR0, $07        ; R0 = 7
+start:    A01             ; R1 = R1 + R0
+          IR0             ; ++R0
+          IR0             ; ++R0
+          MAR, end        ; Setzt AR auf end
+          JE0, $13        ; Springt zu AR, wenn r0 = 19
+          MAR, start      ; Setzt AR auf start
+          JMP             ;
+end:      X01             ; abschlie�end das Resultat aus R1 
+          MAR, result     ;   über R0
+          SR0             ;   an die vereinbarte Adresse schreiben
+          HLT             ; Programm endet
+result:   DAT $AA

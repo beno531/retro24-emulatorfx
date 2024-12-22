@@ -1,0 +1,24 @@
+; Die ersten 20 Zahlen der Folge 1,2,4,7,11,16, ... (+1,+2,+3,+4,+5
+; etc.) errechnen und nacheinander im Speicher ablegen.
+; Ergebnisse stehen im Speicher an den Adressen $011B bis $012F.
+
+.base $0100               ; Fester Programmstart nach Reset
+
+          MR0, $01        ; 
+          C01             ; R1 = 1
+          MR0, $14        ; 
+          C02             ; R2 = 20
+          MR0, $00        ; R0 = 0
+start:    MAR, end
+          JE0, $15
+          A01
+          MAR, result
+          AAR
+          X01
+          SR0
+          X01
+          IR0
+          MAR, start      
+          JMP
+end:      HLT             
+result:   DAT $AA x 20

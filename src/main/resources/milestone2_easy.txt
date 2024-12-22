@@ -1,0 +1,179 @@
+; Die ersten 20 Zahlen der Folge 1,2,4,7,11,16, ... (+1,+2,+3,+4,+5
+; etc.) errechnen und nacheinander im Speicher ablegen.
+; Ergebnisse stehen im Speicher an den Adressen $011B bis $012F.
+
+.base $0100               ; Fester Programmstart nach Reset
+
+
+MR0, $01
+C01
+
+
+MAR, $000A
+SRW
+
+
+start: MR0, $FF ; GELB
+MAR, $E100
+SR0
+MAR, $E101
+SR0
+MAR, $E102
+SR0
+MAR, $E103
+SR0
+MAR, $E104
+SR0
+MAR, $E105
+SR0
+MAR, $E106
+SR0
+MAR, $E107
+SR0
+
+MR0, $FF
+MAR, $F100
+SR0
+MAR, $F101
+SR0
+MAR, $F102
+SR0
+MAR, $F103
+SR0
+MAR, $F104
+SR0
+MAR, $F105
+SR0
+MAR, $F106
+SR0
+MAR, $F107
+SR0
+
+MAR, $000A
+SRW
+
+
+MR0, $00 ; BLAU
+MAR, $E100
+SR0
+MAR, $E101
+SR0
+MAR, $E102
+SR0
+MAR, $E103
+SR0
+MAR, $E104
+SR0
+MAR, $E105
+SR0
+MAR, $E106
+SR0
+MAR, $E107
+SR0
+
+MR0, $FF
+MAR, $F100
+SR0
+MAR, $F101
+SR0
+MAR, $F102
+SR0
+MAR, $F103
+SR0
+MAR, $F104
+SR0
+MAR, $F105
+SR0
+MAR, $F106
+SR0
+MAR, $F107
+SR0
+
+MAR, $000A
+SRW
+
+
+MR0, $FF ; WEIß
+MAR, $E100
+SR0
+MAR, $E101
+SR0
+MAR, $E102
+SR0
+MAR, $E103
+SR0
+MAR, $E104
+SR0
+MAR, $E105
+SR0
+MAR, $E106
+SR0
+MAR, $E107
+SR0
+
+MR0, $00
+MAR, $F100
+SR0
+MAR, $F101
+SR0
+MAR, $F102
+SR0
+MAR, $F103
+SR0
+MAR, $F104
+SR0
+MAR, $F105
+SR0
+MAR, $F106
+SR0
+MAR, $F107
+SR0
+
+MAR, $000A
+SRW
+
+
+MR0, $00 ; SCHWARZ
+MAR, $E100
+SR0
+MAR, $E101
+SR0
+MAR, $E102
+SR0
+MAR, $E103
+SR0
+MAR, $E104
+SR0
+MAR, $E105
+SR0
+MAR, $E106
+SR0
+MAR, $E107
+SR0
+
+MR0, $00
+MAR, $F100
+SR0
+MAR, $F101
+SR0
+MAR, $F102
+SR0
+MAR, $F103
+SR0
+MAR, $F104
+SR0
+MAR, $F105
+SR0
+MAR, $F106
+SR0
+MAR, $F107
+SR0
+
+MAR, $000A
+SRW
+
+
+
+MAR, start
+JMP
+
