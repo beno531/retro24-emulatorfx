@@ -44,10 +44,10 @@ public class PPU extends Canvas{
                 int index = y * SCREEN_WIDTH / 10 + x;
 
                 // Dunkel/Hell aus $E000
-                boolean isBright = (memory.read(0xE000 + index / 8) & (1 << (7 - (index % 8)))) != 0;
+                boolean isBright = memory.read(0xE000 + index) != 0;
 
                 // Monochrom/Farbig aus $F000
-                boolean isColor = (memory.read(0xF000 + index / 8) & (1 << (7 - (index % 8)))) != 0;
+                boolean isColor = memory.read(0xF000 + index) != 0;
 
                 // Farbe basierend auf den Bits bestimmen
                 Color color = determineColor(isBright, isColor);

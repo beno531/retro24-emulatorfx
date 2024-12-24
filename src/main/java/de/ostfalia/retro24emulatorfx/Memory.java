@@ -4,49 +4,25 @@ import java.util.Arrays;
 
 public class Memory {
     private static final int SIZE_IO = 0x0100; // 256 Bytes für I/O-Page (0x0000 - 0x00FF)
-    private static final int SIZE_RAM = 0xDC00; // 56320 Bytes für RAM (0x0100 - 0xDFFF)
+    private static final int SIZE_Program = 0xDC00; // 56320 Bytes für Programme (0x0100 - 0xDFFF)
     private static final int SIZE_VIDEO = 0x2000; // 8192 Bytes für Video (0xE000 - 0xFFFF)
-
-    private static final int SCREEN_WIDTH = 64;
-    private static final int SCREEN_HEIGHT = 64;
-    private static final int PIXEL_SIZE = 10; // Größe eines Pixels in der Anzeige
-
-    //private static Memory instance;
     private int[] io;
     private int[] program;
     private int[] video;
 
-    /*
-        Speicher-Layout:
-        - I/O-Page bei $0000-$00FF
-        - Programmspeicher bei $0100-$DFFF
-        - Grafikspeicher bei $E000-$FFFF
-     */
-
     public Memory() {
         io = new int[SIZE_IO];
-        program = new int[SIZE_RAM];
+        program = new int[SIZE_Program];
         video = new int[SIZE_VIDEO];
 
-        // Setzt den RAM-Bereich von $0100-$DFFF auf 0xFF
         Arrays.fill(program, 0xFF);
-        setTitle();
-    }
-
-    private void writeChars(int offset_Zeile, int offset_Spalte, int[][] chars){
-        for (int x = 0; x < chars.length; x++) {
-            for (int y = 0; y < chars[x].length; y++) {
-                int index = (y + offset_Zeile) * 8 + (x + offset_Spalte);
-                video[index] = chars[x][y];
-            }
-        }
     }
 
     public int read(int address) {
         if (address >= 0x0000 && address <= 0x00FF) {
             return io[address]; // I/O-Bereich
         } else if (address >= 0x0100 && address <= 0xDFFF) {
-            return program[address - 0x0100]; // RAM-Bereich
+            return program[address - 0x0100]; // Program-Bereich
         } else if (address >= 0xE000 && address <= 0xFFFF) {
             return video[address - 0xE000]; // Video-Bereich
         } else {
@@ -58,7 +34,7 @@ public class Memory {
         if (address >= 0x0000 && address <= 0x00FF) {
             io[address] = value; // I/O-Bereich
         } else if (address >= 0x0100 && address <= 0xDFFF) {
-            program[address - 0x0100] = value; // RAM-Bereich
+            program[address - 0x0100] = value; // Program-Bereich
         } else if (address >= 0xE000 && address <= 0xFFFF) {
             video[address - 0xE000] = value; // Video-Bereich
         } else {
@@ -67,30 +43,85 @@ public class Memory {
     }
 
     public void setTitle(){
-        // Setzt Titelbildschirm
-        int[][] retro_zeichen = {
-                {0b01111100, 0b01000010, 0b01000010, 0b01111100, 0b01001000, 0b01000100, 0b01000010}, // R
-                {0b01111110, 0b01000000, 0b01000000, 0b01111100, 0b01000000, 0b01000000, 0b01111110}, // E
-                {0b01111110, 0b00010000, 0b00010000, 0b00010000, 0b00010000, 0b00010000, 0b00010000}, // T
-                {0b01111100, 0b01000010, 0b01000010, 0b01111100, 0b01001000, 0b01000100, 0b01000010}, // R
-                {0b00111100, 0b01000010, 0b01000010, 0b01000010, 0b01000010, 0b01000010, 0b00111100}, // O
+
+        int[][] letterR = {
+                {1, 1, 1, 1, 0},
+                {1, 0, 0, 0, 1},
+                {1, 0, 0, 0, 1},
+                {1, 1, 1, 1, 0},
+                {1, 0, 1, 0, 0},
+                {1, 0, 0, 1, 0},
+                {1, 0, 0, 0, 1}
         };
 
-        writeChars(21,1, retro_zeichen);
-
-        int[][] num_zeichen = {
-                {0b00111100, 0b01000010, 0b00000100, 0b00001000, 0b00010000, 0b00100000, 0b01111110}, // 2
-                {0b00001000, 0b00011000, 0b00101000, 0b01001000, 0b01111110, 0b00001000, 0b00001000}  // 4
+        int[][] letterE = {
+                {1, 1, 1, 1, 1},
+                {1, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0},
+                {1, 1, 1, 1, 0},
+                {1, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0},
+                {1, 1, 1, 1, 1}
         };
-        writeChars(31,5, num_zeichen);
+
+        int[][] letterT = {
+                {1, 1, 1, 1, 1},
+                {0, 0, 1, 0, 0},
+                {0, 0, 1, 0, 0},
+                {0, 0, 1, 0, 0},
+                {0, 0, 1, 0, 0},
+                {0, 0, 1, 0, 0},
+                {0, 0, 1, 0, 0}
+        };
+
+        int[][] letterO = {
+                {0, 1, 1, 1, 0},
+                {1, 0, 0, 0, 1},
+                {1, 0, 0, 0, 1},
+                {1, 0, 0, 0, 1},
+                {1, 0, 0, 0, 1},
+                {1, 0, 0, 0, 1},
+                {0, 1, 1, 1, 0}
+        };
+
+        int[][] number2 = {
+                {0, 1, 1, 1, 0},
+                {1, 0, 0, 0, 1},
+                {0, 0, 0, 0, 1},
+                {0, 0, 0, 1, 0},
+                {0, 0, 1, 0, 0},
+                {0, 1, 0, 0, 0},
+                {1, 1, 1, 1, 1}
+        };
+
+        int[][] number4 = {
+                {0, 0, 0, 1, 0},
+                {0, 0, 1, 1, 0},
+                {0, 1, 0, 1, 0},
+                {1, 0, 0, 1, 0},
+                {1, 1, 1, 1, 1},
+                {0, 0, 0, 1, 0},
+                {0, 0, 0, 1, 0}
+        };
+
+        writeChars(letterR, 14, 25);
+        writeChars(letterE, 20, 25);
+        writeChars(letterT, 26, 25);
+        writeChars(letterR, 32, 25);
+        writeChars(letterO, 38, 25);
+        writeChars(number2, 38, 34);
+        writeChars(number4, 44, 34);
     }
 
-    public void clearVideo() {
-        Arrays.fill(video, 0x00);
-    }
-
-    public void clearProgram() {
-        Arrays.fill(program, 0xFF);
+    public void writeChars(int[][] letter, int xPos, int yPos) {
+        for (int y = 0; y < letter.length; y++) {
+            for (int x = 0; x < letter[y].length; x++) {
+                if (letter[y][x] == 1) {
+                    int index = (y + yPos) * 64 + (x + xPos);
+                    video[index] = 1;
+                }
+            }
+        }
     }
 
     public void clearAll() {
@@ -98,6 +129,4 @@ public class Memory {
         Arrays.fill(program, 0xFF);
         Arrays.fill(io, 0x00);
     }
-
-
 }

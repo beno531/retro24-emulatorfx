@@ -169,6 +169,7 @@ public class CPU {
         r1 = 0x00;
         r2 = 0x00;
         r3 = 0x00;
+        hlt = false;
     }
 
     // --- Instructions ---

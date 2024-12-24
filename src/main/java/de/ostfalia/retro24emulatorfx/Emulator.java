@@ -1,17 +1,12 @@
 package de.ostfalia.retro24emulatorfx;
 
-import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -106,13 +101,11 @@ public class Emulator extends Application {
 
         loader.loadStartProgramm();
 
-        gameLoop.play();
+        ppu.render(); // TODO: Könnte schöner sein
+
+        //gameLoop.play();
 
         mainStage.show();
-    }
-
-    public void loadProgram(int[] program) {
-        loader.writeProgram(program);
     }
 
     private void loadProgram(String program) {
@@ -123,15 +116,16 @@ public class Emulator extends Application {
     }
 
     private void softReset(){
-        memory.clearProgram();
-        memory.clearVideo();
+        memory.clearAll();
         cpu.reset();
+        ppu.render();
     }
 
     private void hardReset(){
         memory.clearAll();
         cpu.reset();
         loader.loadStartProgramm();
+        ppu.render(); // TODO: Könnte schöner sein
     }
 
     public static void main(String[] args) {
