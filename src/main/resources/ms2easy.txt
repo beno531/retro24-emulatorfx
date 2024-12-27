@@ -1,0 +1,132 @@
+.base $0100               ; Fester Programmstart nach Reset
+
+MR0, $00
+C01      ; R1
+
+loop1:
+
+MR0, $E8
+C02      ; R2
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+MR0, $00
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
+
+MR0, $F8
+C02      ; R2
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+MR0, $00
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
+
+IRW ; Erhöht den Wert von R1 um 1
+
+
+MR0, $E8
+C02      ; R2
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+MR0, $01
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
+
+MR0, $F8
+C02      ; R2
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+MR0, $01
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
+
+IRW ; Erhöht den Wert von R1 um 1
+
+
+MR0, $E8
+C02      ; R2
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+MR0, $00
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
+
+MR0, $F8
+C02      ; R2
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+MR0, $01
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
+
+IRW ; Erhöht den Wert von R1 um 1
+
+
+MR0, $E8
+C02      ; R2
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+MR0, $01
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
+
+MR0, $F8
+C02      ; R2
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+MR0, $00
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
+
+IRW ; Erhöht den Wert von R1 um 1
+
+
+
+X01 ; Vertauscht die Inhalte von R0 und R1.
+MAR, loop1_end
+JE0, $40 ;  Springt zu der in AR angegebenen Adresse, falls R0 gleich dem nachfolgenden Byte ist.
+X01 ; Vertauscht die Inhalte von R0 und R1.
+
+MAR, loop1
+JMP
+
+
+loop1_end:
+
+
+; Hallo
+
+
+MAR, $E01F
+TAW ; AR wird nach R1/R2 kopiert
+MAR, result ;  Lädt AR mit den nächsten beiden Bytes.
+SRW ; Speichert R1 an die in AR angegebene Adresse, ferner R2 an die Adresse dahinter.
+
+loop2:
+MAR, result ;  Lädt AR mit den nächsten beiden Bytes.
+LRW ; Lädt R1 aus der in AR angegebenen Adresse, ferner R2 aus der Adresse dahinter
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+
+
+MR0, $01
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
+
+MR0, $40
+AAR
+
+
+TAW ; AR wird nach R1/R2 kopiert
+MAR, result ;  Lädt AR mit den nächsten beiden Bytes.
+SRW ; Speichert R1 an die in AR angegebene Adresse, ferner R2 an die Adresse dahinter.
+
+
+
+
+
+MAR, count ;  Lädt AR mit den nächsten beiden Bytes.
+LR0
+IR0 ; Erhöht den Wert von R0 um 1
+SR0
+
+MAR, loop2_end
+JE0, $40 ;  Springt zu der in AR angegebenen Adresse, falls R0 gleich dem nachfolgenden Byte ist.
+
+
+MAR, loop2
+JMP
+
+
+loop2_end:
+
+MAR, $000A ; DRAW
+MR0, $01 ; DRAW
+SR0 ; DRAW
+HLT
+
+
+result: DAT $AA x 2
+count: DAT $00

@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 public class CPU {
 
-    private int ar = 0x0000;  // Address Register
-    private int ic = 0x0100;  // Instruction Counter
+    private int ar = 0x0000;
+    private int ic = 0x0100;
     private int r0 = 0x00;
     private int r1 = 0x00;
     private int r2 = 0x00;
@@ -13,15 +13,10 @@ public class CPU {
 
     private boolean hlt = false;
 
-    private boolean running;
-
     private Memory memory;
     private Map<Integer, Runnable> opcodeMap = new HashMap<>();
 
     public CPU() {
-        //memory = Memory.getInstance();
-        running = true;
-
         opcodeMap.put(0x00, this::nul); // NUL ($00, 1-Byte-OP): Prozessor tut nichts
         opcodeMap.put(0x01, this::mar); // MAR ($01, 3-Byte-OP): Lädt AR mit den nächsten beiden Bytes.
         opcodeMap.put(0x02, this::sic); // SIC ($02, 1-Byte-OP): Speichert IC an die im AR angegebene Adresse.
@@ -63,6 +58,9 @@ public class CPU {
 
         int opcode = memory.read(ic);
 
+        incrTickByte();
+        decrTockByte();
+
         debugOut(opcode);
 
         Runnable instruction = opcodeMap.get(opcode);
@@ -92,6 +90,10 @@ public class CPU {
         System.out.printf("R1: 0x%02X%n", this.r1);
         System.out.printf("R2: 0x%02X%n", this.r2);
         System.out.printf("R3: 0x%02X%n", this.r3);
+
+        System.out.println("isHlt: " + this.hlt);
+        System.out.println("Tick-Byte: " + getTickByte());
+        System.out.println("Tock-Byte: " + getTockByte());
     }
 
     // --- Getter/ Setter ---
@@ -152,7 +154,25 @@ public class CPU {
         this.hlt = hlt;
     }
 
+    public int getTickByte() {
+        return memory.read(0x0010);
+    }
+    public int getTockByte() {
+        return memory.read(0x0011);
+    }
+
     // --- Helper ---
+
+    public void incrTickByte(){
+        int tickVal = memory.read(0x0010);
+        tickVal = tickVal + 1 & 0xFF;
+        memory.write(0x0010, tickVal);
+    }
+    public void decrTockByte(){
+        int tockVal = memory.read(0x0011);
+        tockVal = tockVal - 1 & 0xFF;
+        memory.write(0x0011, tockVal);
+    }
 
     public void incrAr(int i){
         ar = (ar + i) & 0xFFFF;
@@ -170,6 +190,8 @@ public class CPU {
         r2 = 0x00;
         r3 = 0x00;
         hlt = false;
+        memory.write(0x0010, 0x00);
+        memory.write(0x0011, 0x00);
     }
 
     // --- Instructions ---

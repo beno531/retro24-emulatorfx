@@ -11,7 +11,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
 import java.io.*;
 
 public class Emulator extends Application {
@@ -36,13 +35,12 @@ public class Emulator extends Application {
         cpu = new CPU();
         cpu.connectMemory(memory);
 
-        // Initialize menu that contains buttons for exiting and switching applications to run.
         MenuBar menuBar = new MenuBar();
         Menu menuFile = new Menu("Program");
 
         MenuItem loadRomItem = new MenuItem("Load Bin");
         loadRomItem.setOnAction(e -> {
-            // Open file choose to let the user select a ROM.
+
             FileChooser f = new FileChooser();
             f.setTitle("Open Bin File");
             File file = f.showOpenDialog(mainStage);
@@ -68,21 +66,21 @@ public class Emulator extends Application {
 
         menuBar.getMenus().add(menuFile);
 
-        // Place all elements into the main window.
+
         VBox root = new VBox();
         root.getChildren().add(menuBar);
         root.getChildren().add(ppu);
 
         Scene mainScene = new Scene(root);
 
-        // Set up the main window for show.
+
         mainStage.setScene(mainScene);
         mainStage.setResizable(false);
 
         gameLoop = new Timeline();
         gameLoop.setCycleCount(Timeline.INDEFINITE);
 
-        // Construct the keyframe telling the application what to happen inside the game loop.
+
         KeyFrame kf = new KeyFrame(
                 Duration.seconds(0.01),  // 100 Hz => 0.01 Sekunden = 10 Millisekunden
                 actionEvent -> {
@@ -99,11 +97,8 @@ public class Emulator extends Application {
 
         gameLoop.getKeyFrames().add(kf);
 
-        loader.loadStartProgramm();
-
-        ppu.render(); // TODO: Könnte schöner sein
-
-        //gameLoop.play();
+        memory.setTitle();
+        ppu.render();
 
         mainStage.show();
     }
@@ -124,8 +119,8 @@ public class Emulator extends Application {
     private void hardReset(){
         memory.clearAll();
         cpu.reset();
-        loader.loadStartProgramm();
-        ppu.render(); // TODO: Könnte schöner sein
+        memory.setTitle();
+        ppu.render();
     }
 
     public static void main(String[] args) {
