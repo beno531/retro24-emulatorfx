@@ -237,10 +237,17 @@ public class CPU {
 
     // Addiert R0 auf R1. Bei Überlauf wird R2 um 1 erhöht. Läuft dabei wiederum R2 über, werden R1 und R2 zu $FF.
     private void a01(){
-        int x = r1 + r0;
+        int x = (r1 & 0xFF) + (r0 & 0xFF);
         if(x > 0xFF){
-            r1 = 0xFF;
-            r2 = Math.min(r2 + 1, 0xFF);
+            r1 = x - 0xFF;
+            int y = r2 + 1;
+            if (y > 0xFF) {
+                r1 = 0xFF;
+                r2 = 0xFF;
+            }
+            else {
+                r2 = y;
+            }
         }
         else {
             r1 = x;

@@ -47,9 +47,6 @@ public class PPU extends Canvas{
                 gc.fillRect(x * PIXEL_SIZE, y * PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE);
             }
         }
-
-        // Setzt DrawFlag auf False;
-        memory.write(0x000A, 0x00);
     }
 
     private Color determineColor(boolean isBright, boolean isColor) {

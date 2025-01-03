@@ -121,7 +121,7 @@ IR0 ; Erhöht den Wert von R0 um 1
 SR0
 
 MAR, loop_b_end
-JE0, $10 ;  Springt zu der in AR angegebenen Adresse, falls R0 gleich dem nachfolgenden Byte ist.
+JE0, $08 ;  Springt zu der in AR angegebenen Adresse, falls R0 gleich dem nachfolgenden Byte ist.
 
 
 MAR, loop_b

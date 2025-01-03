@@ -91,6 +91,8 @@ public class Emulator extends Application {
 
                     if (ppu.isDrawFlag()){
                         ppu.render();
+                        // Setzt DrawFlag auf False;
+                        memory.write(0x000A, 0x00);
                     }
                 }
         );

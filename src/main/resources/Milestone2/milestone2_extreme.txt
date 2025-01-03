@@ -1,8 +1,5 @@
 .base $0100               ; Fester Programmstart nach Reset
 
-MR0, $00
-C01      ; R1
-
 loop1:
 
 MR0, $E8
@@ -78,6 +75,9 @@ JMP
 loop1_end:
 
 
+
+
+
 MAR, $E020
 TAW ; AR wird nach R1/R2 kopiert
 MAR, result ;  Lädt AR mit den nächsten beiden Bytes.
@@ -95,12 +95,29 @@ SR0 ; Speichert R0 an die in AR angegebene Adresse.
 MR0, $40
 AAR
 
+MR0, $00
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
+
+
+
+
+MR0, $40
+AAR
+
 MR0, $01
 SR0 ; Speichert R0 an die in AR angegebene Adresse.
 
 MR0, $40
 AAR
 
+MR0, $01
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
+
+
+
+
+MR0, $40
+AAR
 
 MR0, $00
 SR0 ; Speichert R0 an die in AR angegebene Adresse.
@@ -108,6 +125,20 @@ SR0 ; Speichert R0 an die in AR angegebene Adresse.
 MR0, $40
 AAR
 
+MR0, $00
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
+
+
+
+
+MR0, $40
+AAR
+
+MR0, $01
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
+
+MR0, $40
+AAR
 
 MR0, $01
 SR0 ; Speichert R0 an die in AR angegebene Adresse.
@@ -126,7 +157,7 @@ IR0 ; Erhöht den Wert von R0 um 1
 SR0
 
 MAR, loop_a_end
-JE0, $10 ;  Springt zu der in AR angegebenen Adresse, falls R0 gleich dem nachfolgenden Byte ist.
+JE0, $08 ;  Springt zu der in AR angegebenen Adresse, falls R0 gleich dem nachfolgenden Byte ist.
 
 
 MAR, loop_a
@@ -156,12 +187,29 @@ SR0 ; Speichert R0 an die in AR angegebene Adresse.
 MR0, $40
 AAR
 
+MR0, $00
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
+
+
+
+
+MR0, $40
+AAR
+
 MR0, $01
 SR0 ; Speichert R0 an die in AR angegebene Adresse.
 
 MR0, $40
 AAR
 
+MR0, $01
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
+
+
+
+
+MR0, $40
+AAR
 
 MR0, $01
 SR0 ; Speichert R0 an die in AR angegebene Adresse.
@@ -169,6 +217,20 @@ SR0 ; Speichert R0 an die in AR angegebene Adresse.
 MR0, $40
 AAR
 
+MR0, $01
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
+
+
+
+
+MR0, $40
+AAR
+
+MR0, $00
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
+
+MR0, $40
+AAR
 
 MR0, $00
 SR0 ; Speichert R0 an die in AR angegebene Adresse.
@@ -188,7 +250,7 @@ IR0 ; Erhöht den Wert von R0 um 1
 SR0
 
 MAR, loop_b_end
-JE0, $10 ;  Springt zu der in AR angegebenen Adresse, falls R0 gleich dem nachfolgenden Byte ist.
+JE0, $08 ;  Springt zu der in AR angegebenen Adresse, falls R0 gleich dem nachfolgenden Byte ist.
 
 
 MAR, loop_b

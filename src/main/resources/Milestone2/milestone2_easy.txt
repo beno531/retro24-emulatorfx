@@ -1,10 +1,8 @@
 .base $0100               ; Fester Programmstart nach Reset
 
-start:MR0, $00
-C01      ; R1
-
 loop:
 
+; R1 Low; R2 High; Schwarz
 MR0, $E8
 C02      ; R2
 RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
@@ -20,6 +18,7 @@ SR0 ; Speichert R0 an die in AR angegebene Adresse.
 IRW ; Erhöht den Wert von R1 um 1
 
 
+; R1 Low; R2 High; Gelb
 MR0, $E8
 C02      ; R2
 RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
@@ -35,6 +34,7 @@ SR0 ; Speichert R0 an die in AR angegebene Adresse.
 IRW ; Erhöht den Wert von R1 um 1
 
 
+; R1 Low; R2 High; Blau
 MR0, $E8
 C02      ; R2
 RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
@@ -50,6 +50,7 @@ SR0 ; Speichert R0 an die in AR angegebene Adresse.
 IRW ; Erhöht den Wert von R1 um 1
 
 
+; R1 Low; R2 High; Weiß
 MR0, $E8
 C02      ; R2
 RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
@@ -68,7 +69,7 @@ IRW ; Erhöht den Wert von R1 um 1
 
 X01 ; Vertauscht die Inhalte von R0 und R1.
 MAR, loop_end
-JE0, $40 ;  Springt zu der in AR angegebenen Adresse, falls R0 gleich dem nachfolgenden Byte ist.
+JE0, $40 ;  Springt zu der in AR angegebenen Adresse, falls R0 gleich 0x40 (64) ist.
 X01 ; Vertauscht die Inhalte von R0 und R1.
 
 MAR, loop
