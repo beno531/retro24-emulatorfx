@@ -14,7 +14,7 @@ public class PPU extends Canvas{
 
     public PPU(){
         super(SCREEN_WIDTH, SCREEN_HEIGHT);
-        setFocusTraversable(true);
+        //setFocusTraversable(false);
 
         gc = this.getGraphicsContext2D();
         gc.setFill(Color.BLACK);
@@ -67,8 +67,7 @@ public class PPU extends Canvas{
     public boolean isDrawFlag(){
         if(memory.read(0x000A) == 0x01){
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 }

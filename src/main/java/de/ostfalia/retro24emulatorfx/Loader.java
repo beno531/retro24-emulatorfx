@@ -18,6 +18,8 @@ public class Loader {
         for (int val : program) {
             memory.write(counter, val);
             counter++;
+
+            // Prüfen ob max. erreicht ist
         }
     }
 
@@ -41,10 +43,11 @@ public class Loader {
             // Konvertiere byte[] zu int[]
             int[] intArray = new int[byteArray.length];
             for (int i = 0; i < byteArray.length; i++) {
-                intArray[i] = byteArray[i] & 0xFF; // Byte zu unsigned Int konvertieren
+                intArray[i] = byteArray[i] & 0xFF;
             }
 
             writeProgram(intArray);
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

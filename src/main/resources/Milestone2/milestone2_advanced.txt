@@ -78,40 +78,17 @@ JMP
 loop1_end:
 
 
-; Hallo
-
-
-MAR, $E020
+MAR, $E01F
 TAW ; AR wird nach R1/R2 kopiert
 MAR, result ;  Lädt AR mit den nächsten beiden Bytes.
 SRW ; Speichert R1 an die in AR angegebene Adresse, ferner R2 an die Adresse dahinter.
 
-loop_a:
+loop2:
 MAR, result ;  Lädt AR mit den nächsten beiden Bytes.
 LRW ; Lädt R1 aus der in AR angegebenen Adresse, ferner R2 aus der Adresse dahinter
 RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
 
 
-MR0, $00
-SR0 ; Speichert R0 an die in AR angegebene Adresse.
-
-MR0, $40
-AAR
-
-MR0, $01
-SR0 ; Speichert R0 an die in AR angegebene Adresse.
-
-MR0, $40
-AAR
-
-
-MR0, $00
-SR0 ; Speichert R0 an die in AR angegebene Adresse.
-
-MR0, $40
-AAR
-
-
 MR0, $01
 SR0 ; Speichert R0 an die in AR angegebene Adresse.
 
@@ -123,66 +100,8 @@ TAW ; AR wird nach R1/R2 kopiert
 MAR, result ;  Lädt AR mit den nächsten beiden Bytes.
 SRW ; Speichert R1 an die in AR angegebene Adresse, ferner R2 an die Adresse dahinter.
 
-MAR, count ;  Lädt AR mit den nächsten beiden Bytes.
-LR0
-IR0 ; Erhöht den Wert von R0 um 1
-SR0
-
-MAR, loop_a_end
-JE0, $10 ;  Springt zu der in AR angegebenen Adresse, falls R0 gleich dem nachfolgenden Byte ist.
 
 
-MAR, loop_a
-JMP
-
-
-loop_a_end:
-
-MAR, $F020
-TAW ; AR wird nach R1/R2 kopiert
-MAR, result ;  Lädt AR mit den nächsten beiden Bytes.
-SRW ; Speichert R1 an die in AR angegebene Adresse, ferner R2 an die Adresse dahinter.
-
-MAR, count ;  Lädt AR mit den nächsten beiden Bytes.
-MR0, $00
-SR0
-
-loop_b:
-MAR, result ;  Lädt AR mit den nächsten beiden Bytes.
-LRW ; Lädt R1 aus der in AR angegebenen Adresse, ferner R2 aus der Adresse dahinter
-RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
-
-
-MR0, $00
-SR0 ; Speichert R0 an die in AR angegebene Adresse.
-
-MR0, $40
-AAR
-
-MR0, $01
-SR0 ; Speichert R0 an die in AR angegebene Adresse.
-
-MR0, $40
-AAR
-
-
-MR0, $01
-SR0 ; Speichert R0 an die in AR angegebene Adresse.
-
-MR0, $40
-AAR
-
-
-MR0, $00
-SR0 ; Speichert R0 an die in AR angegebene Adresse.
-
-MR0, $40
-AAR
-
-
-TAW ; AR wird nach R1/R2 kopiert
-MAR, result ;  Lädt AR mit den nächsten beiden Bytes.
-SRW ; Speichert R1 an die in AR angegebene Adresse, ferner R2 an die Adresse dahinter.
 
 
 MAR, count ;  Lädt AR mit den nächsten beiden Bytes.
@@ -190,15 +109,16 @@ LR0
 IR0 ; Erhöht den Wert von R0 um 1
 SR0
 
-MAR, loop_b_end
-JE0, $10 ;  Springt zu der in AR angegebenen Adresse, falls R0 gleich dem nachfolgenden Byte ist.
+MAR, loop2_end
+JE0, $40 ;  Springt zu der in AR angegebenen Adresse, falls R0 gleich dem nachfolgenden Byte ist.
 
 
-MAR, loop_b
+MAR, loop2
 JMP
 
 
-loop_b_end:
+loop2_end:
+
 MAR, $000A ; DRAW
 MR0, $01 ; DRAW
 SR0 ; DRAW

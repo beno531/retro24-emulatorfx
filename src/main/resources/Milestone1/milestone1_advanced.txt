@@ -6,11 +6,11 @@
 
           MR0, $01        ; 
           C01             ; R1 = 1
-          MR0, $14        ; 
+          MR0, $14        ;
           C02             ; R2 = 20
           MR0, $00        ; R0 = 0
 start:    MAR, end
-          JE0, $15
+          JE0, $14
           A01
           MAR, result
           AAR
