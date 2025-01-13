@@ -14,7 +14,6 @@ public class PPU extends Canvas{
 
     public PPU(){
         super(SCREEN_WIDTH, SCREEN_HEIGHT);
-        //setFocusTraversable(false);
 
         gc = this.getGraphicsContext2D();
         gc.setFill(Color.BLACK);

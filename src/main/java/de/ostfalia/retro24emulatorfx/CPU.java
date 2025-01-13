@@ -13,6 +13,8 @@ public class CPU {
 
     private boolean hlt = false;
 
+    private int currentOpcode;
+
     private Memory memory;
     private Map<Integer, Runnable> opcodeMap = new HashMap<>();
 
@@ -56,19 +58,19 @@ public class CPU {
 
     public void tick() {
 
-        int opcode = memory.read(ic);
+        currentOpcode = memory.read(ic);
 
         incrTickByte();
         decrTockByte();
 
-        debugOut(opcode);
+        //debugOut(opcode);
 
-        Runnable instruction = opcodeMap.get(opcode);
+        Runnable instruction = opcodeMap.get(currentOpcode);
 
         if (instruction != null) {
             instruction.run();
         } else {
-            throw new IllegalStateException("Unbekannter Opcode: " + opcode);
+            throw new IllegalStateException("Unbekannter Opcode: " + currentOpcode);
         }
 
     }
@@ -97,6 +99,11 @@ public class CPU {
     }
 
     // --- Getter/ Setter ---
+
+
+    public int getCurrentOpcode() {
+        return currentOpcode;
+    }
 
     public int getIc() {
         return ic;
@@ -239,7 +246,7 @@ public class CPU {
     private void a01(){
         int x = (r1 & 0xFF) + (r0 & 0xFF);
         if(x > 0xFF){
-            r1 = x - 0xFF;
+            r1 = x & 0xFF;
             int y = r2 + 1;
             if (y > 0xFF) {
                 r1 = 0xFF;

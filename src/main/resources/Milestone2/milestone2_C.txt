@@ -28,6 +28,7 @@ C02      ; R2
 RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
 MR0, $01
 SR0 ; Speichert R0 an die in AR angegebene Adresse.
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
 
 IRW ; Erhöht den Wert von R1 um 1
 

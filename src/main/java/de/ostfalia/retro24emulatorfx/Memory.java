@@ -3,9 +3,9 @@ package de.ostfalia.retro24emulatorfx;
 import java.util.Arrays;
 
 public class Memory {
-    private static final int SIZE_IO = 0x0100; // 256 Bytes für I/O-Page (0x0000 - 0x00FF)
-    private static final int SIZE_Program = 0xDC00; // 56320 Bytes für Programme (0x0100 - 0xDFFF)
-    private static final int SIZE_VIDEO = 0x2000; // 8192 Bytes für Video (0xE000 - 0xFFFF)
+    public static final int SIZE_IO = 0x0100; // 256 Bytes für I/O-Page (0x0000 - 0x00FF)
+    public static final int SIZE_Program = 0xDF00; // 57088 Bytes für Programme (0x0100 - 0xDFFF)
+    public static final int SIZE_VIDEO = 0x2000; // 8192 Bytes für Video (0xE000 - 0xFFFF)
     private int[] io;
     private int[] program;
     private int[] video;
@@ -128,5 +128,9 @@ public class Memory {
         Arrays.fill(video, 0x00);
         Arrays.fill(program, 0xFF);
         Arrays.fill(io, 0x00);
+    }
+
+    public int[] getProgram() {
+        return program;
     }
 }
