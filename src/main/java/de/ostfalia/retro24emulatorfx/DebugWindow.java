@@ -2,6 +2,8 @@ package de.ostfalia.retro24emulatorfx;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -18,6 +20,7 @@ import java.util.List;
 
 public class DebugWindow{
 
+    private final Emulator emulator;
     private final CPU cpu;
     private final Memory memory;
     private final Timeline gameLoop;
@@ -25,8 +28,10 @@ public class DebugWindow{
     private boolean isPaused = true;
     private Stage debugStage;
     public static final List<Stage> memoryWindows = new ArrayList<>();
+    private double clockSpeed = 0.01;
 
-    public DebugWindow(CPU cpu, Memory memory, Timeline gameLoop) {
+    public DebugWindow(Emulator emulator, CPU cpu, Memory memory, Timeline gameLoop) {
+        this.emulator = emulator;
         this.cpu = cpu;
         this.memory = memory;
         this.gameLoop = gameLoop;
@@ -99,13 +104,26 @@ public class DebugWindow{
         Button startButton = new Button("Start");
         Button pauseButton = new Button("Pause");
         Button stepButton = new Button("Step");
+        Button handbrakeButton = new Button("Change to 1kHz");
 
         startButton.setOnAction(e -> startLoop());
         pauseButton.setOnAction(e -> pauseLoop());
         stepButton.setOnAction(e -> stepLoop());
+        handbrakeButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (handbrakeButton.getText().equals("Change to 1kHz")) {
+                    handbrakeButton.setText("Change to 100Hz");
+                } else {
+                    handbrakeButton.setText("Change to 1kHz");
+                }
+
+                changeClockSpeed();
+            }
+        });
 
         HBox cpuButtonBox = new HBox(10);
-        cpuButtonBox.getChildren().addAll(startButton, pauseButton, stepButton);
+        cpuButtonBox.getChildren().addAll(startButton, pauseButton, stepButton, handbrakeButton);
 
         VBox cpuControlsBox = new VBox(10);
         cpuControlsBox.getChildren().add(new Text("CPU Controls:"));
@@ -124,7 +142,7 @@ public class DebugWindow{
 
     // Methode zum Pausieren des Loops
     private void pauseLoop() {
-        gameLoop.pause();  // Pause the game loop
+        gameLoop.stop();  // Pause the game loop
         isPaused = true;
     }
 
@@ -228,5 +246,22 @@ public class DebugWindow{
         memorySnapWindow.setOnCloseRequest(event -> {
             memoryWindows.remove(memorySnapWindow);
         });
+    }
+
+    private void changeClockSpeed() {
+
+        if (clockSpeed == 0.01){
+            clockSpeed = 0.001;
+        } else {
+            clockSpeed = 0.01;
+        }
+
+        if(isPaused){
+            emulator.changeClockSpeed(clockSpeed);
+        }else {
+            pauseLoop();
+            emulator.changeClockSpeed(clockSpeed);
+            startLoop();
+        }
     }
 }

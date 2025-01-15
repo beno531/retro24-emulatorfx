@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -20,7 +21,8 @@ public class MainWindow {
     private final Memory memory;
     private final Loader loader;
     private final Timeline gameLoop;
-    private final DebugWindow debugWindow;  // DebugWindow wird hier instanziiert
+    private final DebugWindow debugWindow;
+    private boolean isIoRefreshable = false;
 
     public MainWindow(Stage stage, CPU cpu, Memory memory, PPU ppu, Loader loader, Timeline gameLoop, DebugWindow debugWindow) {
         this.mainStage = stage;
@@ -81,6 +83,34 @@ public class MainWindow {
         root.getChildren().add(ppu);
 
         Scene mainScene = new Scene(root);
+
+        mainScene.setOnKeyPressed(event -> {
+
+            if (isIoRefreshable){
+
+                // TODO: Reset Input
+
+                KeyCode keyCode = event.getCode();
+
+                System.out.println("Key pressed: " + keyCode.getName());
+
+                if (keyCode == KeyCode.W || keyCode == KeyCode.UP) {
+                    memory.write(0x0020, 0b00000001);
+                }else if (keyCode == KeyCode.A || keyCode == KeyCode.LEFT) {
+                    memory.write(0x0020, 0b00000100);
+                }else if (keyCode == KeyCode.S || keyCode == KeyCode.DOWN) {
+                    memory.write(0x0020, 0b00000010);
+                }else if (keyCode == KeyCode.D || keyCode == KeyCode.RIGHT) {
+                    memory.write(0x0020, 0b00001000);
+                }else if (keyCode == KeyCode.SPACE) {
+                    memory.write(0x0020, 0b00010000);
+                }
+
+                isIoRefreshable = false;
+            }
+        });
+
+
         mainStage.setScene(mainScene);
         mainStage.setResizable(false);
 
@@ -96,6 +126,10 @@ public class MainWindow {
         mainStage.show();
     }
 
+    public void setIoRefreshable(boolean ioRefreshable) {
+        isIoRefreshable = ioRefreshable;
+        memory.write(0x0020, 0x00);
+    }
 
     private void showDebugWindow() {
         debugWindow.show();
