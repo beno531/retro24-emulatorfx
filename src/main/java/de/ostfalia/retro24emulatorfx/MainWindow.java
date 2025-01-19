@@ -9,7 +9,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import java.io.File;
 
@@ -87,12 +86,9 @@ public class MainWindow {
         mainScene.setOnKeyPressed(event -> {
 
             if (isIoRefreshable){
-
-                // TODO: Reset Input
-
                 KeyCode keyCode = event.getCode();
 
-                System.out.println("Key pressed: " + keyCode.getName());
+                //System.out.println("Key pressed: " + keyCode.getName());
 
                 if (keyCode == KeyCode.W || keyCode == KeyCode.UP) {
                     memory.write(0x0020, 0b00000001);
@@ -106,8 +102,13 @@ public class MainWindow {
                     memory.write(0x0020, 0b00010000);
                 }
 
-                isIoRefreshable = false;
+                //isIoRefreshable = false;
             }
+        });
+
+        mainScene.setOnKeyReleased(event -> {
+            // Taste wird losgelassen, daher zurücksetzen der Variable
+            memory.write(0x0020, 0x00);
         });
 
 
@@ -127,8 +128,9 @@ public class MainWindow {
     }
 
     public void setIoRefreshable(boolean ioRefreshable) {
+
         isIoRefreshable = ioRefreshable;
-        memory.write(0x0020, 0x00);
+        //memory.write(0x0020, 0x00);
     }
 
     private void showDebugWindow() {
@@ -136,7 +138,6 @@ public class MainWindow {
     }
 
     private void loadProgram(String program) {
-        gameLoop.stop();
         softReset();
         loader.writeProgram(program);
 
@@ -146,12 +147,14 @@ public class MainWindow {
     }
 
     private void softReset() {
+        debugWindow.pauseLoop();
         memory.clearAll();
         cpu.reset();
         ppu.render();
     }
 
     private void hardReset() {
+        debugWindow.pauseLoop();
         memory.clearAll();
         cpu.reset();
         memory.setTitle();

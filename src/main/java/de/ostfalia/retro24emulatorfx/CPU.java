@@ -290,7 +290,7 @@ public class CPU {
 
     // Vertauscht die Inhalte von R1 und R2.
     private void x12(){
-        int temp = r1;
+       int temp = r1;
         r1 = r2;
         r2 = temp;
         incrIc(1);
@@ -389,13 +389,15 @@ public class CPU {
 
     // Speichert in R0 das logische ODER aus dem aktuellen Wert von R0 und dem nachfolgenden Byte.
     private void or0(){
-        r0 = (r0 | memory.read(ic + 1)) & 0xFF;
+        int temp = (memory.read(ic + 1)) & 0xFF;
+        r0 = (r0 | temp) & 0xFF;
         incrIc(2);
     }
 
     // Speichert in R0 das logische UND aus dem aktuellen Wert von R0 und dem nachfolgenden Byte.
     private void an0(){
-        r0 = (r0 & memory.read(ic + 1)) & 0xFF;
+        int temp = (memory.read(ic + 1)) & 0xFF;
+        r0 = (r0 & temp) & 0xFF;
         incrIc(2);
     }
 

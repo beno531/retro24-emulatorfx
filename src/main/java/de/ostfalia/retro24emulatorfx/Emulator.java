@@ -66,7 +66,10 @@ public class Emulator extends Application {
             memory.write(0x000A, 0x00);
         }
 
+       System.out.println( memory.read(0x0020));
+
         mainWindow.updateDebugInfo();
+        //memory.write(0x0020, 0x00);
     }
 
     public void changeClockSpeed(double speed){

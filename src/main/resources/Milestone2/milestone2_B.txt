@@ -127,3 +127,8 @@ HLT
 
 result: DAT $AA x 2
 count: DAT $00
+
+
+
+
+57344

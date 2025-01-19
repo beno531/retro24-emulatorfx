@@ -167,6 +167,13 @@ JMP
 
 loop_a_end:
 
+
+
+
+
+
+
+
 MAR, $F020
 TAW ; AR wird nach R1/R2 kopiert
 MAR, result ;  Lädt AR mit den nächsten beiden Bytes.

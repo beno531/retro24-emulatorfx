@@ -141,7 +141,7 @@ public class DebugWindow{
     }
 
     // Methode zum Pausieren des Loops
-    private void pauseLoop() {
+    public void pauseLoop() {
         gameLoop.stop();  // Pause the game loop
         isPaused = true;
     }
@@ -251,7 +251,7 @@ public class DebugWindow{
     private void changeClockSpeed() {
 
         if (clockSpeed == 0.01){
-            clockSpeed = 0.001;
+            clockSpeed = 0.0001;
         } else {
             clockSpeed = 0.01;
         }

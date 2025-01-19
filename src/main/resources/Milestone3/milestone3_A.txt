@@ -1,0 +1,592 @@
+.base $0100               ; Fester Programmstart nach Reset
+
+
+
+prestart:
+MAR, $0020
+LR0
+
+MAR, start;
+JE0, $10 ;
+
+MAR, prestart
+JMP
+
+
+
+start:
+; Speichert Startpunkt im line1 +1
+MAR, $E80F
+TAW ; AR wird nach R1/R2 kopiert
+MAR, line1 ;  Lädt AR mit den nächsten beiden Bytes.
+SRW ; Speichert R1 an die in AR angegebene Adresse, ferner R2 an die Adresse dahinter.
+
+; Speichert Startpunkt im line1 +1
+MAR, $E831
+TAW ; AR wird nach R1/R2 kopiert
+MAR, line2 ;  Lädt AR mit den nächsten beiden Bytes.
+SRW ; Speichert R1 an die in AR angegebene Adresse, ferner R2 an die Adresse dahinter.
+
+MAR, drawmanager
+JMP
+
+
+
+
+loop:
+MAR, $0020
+LR0
+
+MAR, premovedownl1;
+JE0, $02 ;
+
+MAR, premovedownl2;
+JE0, $08 ;
+
+MAR, premoveupl1;
+JE0, $01 ;
+
+MAR, premoveupl2;
+JE0, $04 ;
+
+MAR, switchcolor;
+JE0, $10 ;
+
+MAR, loop
+JMP
+
+premoveupl1:
+MAR, moveup
+TAW ; AR wird nach R1/R2 kopiert
+MAR, artemp;  Lädt AR mit den nächsten beiden Bytes.
+SRW ; Speichert R1 an die in AR angegebene Adresse, ferner R2 an die Adresse dahinter.
+
+MAR, count1;  Lädt AR mit den nächsten beiden Bytes.
+LR0
+DR0
+MAR, loop
+JE0, $00
+MAR, count1;
+SR0
+
+MAR, drawline1
+LR0
+IR0
+SR0
+
+MAR, line1
+TAW ; AR wird nach R1/R2 kopiert
+MAR, lineselector ;  Lädt AR mit den nächsten beiden Bytes.
+SRW ; Speichert R1 an die in AR angegebene Adresse, ferner R2 an die Adresse dahinter.
+
+MAR, cleanup
+JMP
+
+premoveupl2:
+MAR, moveup
+TAW ; AR wird nach R1/R2 kopiert
+MAR, artemp;  Lädt AR mit den nächsten beiden Bytes.
+SRW ; Speichert R1 an die in AR angegebene Adresse, ferner R2 an die Adresse dahinter.
+
+MAR, count2;  Lädt AR mit den nächsten beiden Bytes.
+LR0
+DR0
+MAR, loop
+JE0, $00
+MAR, count2;
+SR0
+
+MAR, drawline2
+LR0
+IR0
+SR0
+
+MAR, line2
+TAW ; AR wird nach R1/R2 kopiert
+MAR, lineselector ;  Lädt AR mit den nächsten beiden Bytes.
+SRW ; Speichert R1 an die in AR angegebene Adresse, ferner R2 an die Adresse dahinter.
+
+MAR, cleanup
+JMP
+
+moveup:
+MAR, lineselector
+LRW
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+LRW ; Lädt R1 aus der in AR angegebenen Adresse, ferner R2 aus der Adresse dahinter
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+
+
+; Setzt Bit für Schwarz
+MR0, $00
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
+
+X12 ; Vertauscht die Inhalte von R1 und R2
+MR0, $FF
+A01 ; Addiert R0 auf R1
+X01
+X03 ; R2 -> R3
+
+MAR, lineselector
+LRW
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+
+X03
+X01
+X12
+
+LR0
+
+C01 ; Kopiert R0 nach R1.
+
+NUL
+
+MR0, $BF
+IR0 ; Erhöht den Wert von R0 um 1
+A01 ; Addiert R0 auf R1
+
+
+X01
+X03
+X12
+X01 ; R2 -> R0, R1 -> R3
+
+
+MAR, lineselector
+LRW
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+
+X01 ; R2 -> R0, R1 -> R3
+X12
+X03
+X01
+SRW
+
+MAR, drawmanager
+JMP
+
+
+premovedownl1:
+
+MAR, movedown
+TAW ; AR wird nach R1/R2 kopiert
+MAR, artemp;  Lädt AR mit den nächsten beiden Bytes.
+SRW ; Speichert R1 an die in AR angegebene Adresse, ferner R2 an die Adresse dahinter.
+
+MAR, count1;  Lädt AR mit den nächsten beiden Bytes.
+LR0
+IR0
+MAR, loop
+JE0, $3D
+MAR, count1;
+SR0
+
+MAR, drawline1
+LR0
+IR0
+SR0
+
+MAR, line1
+TAW ; AR wird nach R1/R2 kopiert
+MAR, lineselector ;  Lädt AR mit den nächsten beiden Bytes.
+SRW ; Speichert R1 an die in AR angegebene Adresse, ferner R2 an die Adresse dahinter.
+
+MAR, cleanup
+JMP
+
+
+premovedownl2:
+
+MAR, movedown
+TAW ; AR wird nach R1/R2 kopiert
+MAR, artemp;  Lädt AR mit den nächsten beiden Bytes.
+SRW ; Speichert R1 an die in AR angegebene Adresse, ferner R2 an die Adresse dahinter.
+
+MAR, count2;  Lädt AR mit den nächsten beiden Bytes.
+LR0
+IR0
+MAR, loop
+JE0, $3D
+MAR, count2;
+SR0
+
+MAR, drawline2
+LR0
+IR0
+SR0
+
+MAR, line2
+TAW ; AR wird nach R1/R2 kopiert
+MAR, lineselector ;  Lädt AR mit den nächsten beiden Bytes.
+SRW ; Speichert R1 an die in AR angegebene Adresse, ferner R2 an die Adresse dahinter.
+
+MAR, cleanup
+JMP
+
+
+
+movedown:
+MAR, lineselector
+LRW
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+LRW ; Lädt R1 aus der in AR angegebenen Adresse, ferner R2 aus der Adresse dahinter
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+
+
+
+; 64
+MR0, $40
+AAR ; Addiert R0 aufs AR, bei Überlauf geht Übertrag verloren
+
+
+
+TAW ; AR wird nach R1/R2 kopiert
+X01
+X03
+X12
+X01 ; R2 -> R0, R1 -> R3
+
+
+MAR, lineselector
+LRW
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+
+X01 ; R2 -> R0, R1 -> R3
+X12
+X03
+X01
+SRW
+
+MAR, drawmanager
+JMP
+
+
+drawmanager:
+
+MAR, line1
+TAW ; AR wird nach R1/R2 kopiert
+MAR, lineselector ;  Lädt AR mit den nächsten beiden Bytes.
+SRW ; Speichert R1 an die in AR angegebene Adresse, ferner R2 an die Adresse dahinter.
+
+MAR, drawline1;  Lädt AR mit den nächsten beiden Bytes.
+LR0
+MAR, predrawline1;
+JE0, $01
+
+
+MAR, line2
+TAW ; AR wird nach R1/R2 kopiert
+MAR, lineselector ;  Lädt AR mit den nächsten beiden Bytes.
+SRW ; Speichert R1 an die in AR angegebene Adresse, ferner R2 an die Adresse dahinter.
+
+MAR, drawline2;  Lädt AR mit den nächsten beiden Bytes.
+LR0
+MAR, predrawline2;
+JE0, $01
+
+MAR, loop
+JMP
+
+
+predrawline1:
+MAR, drawline1
+LR0
+DR0
+SR0
+MAR, draw
+JMP
+
+predrawline2:
+MAR, drawline2
+LR0
+DR0
+SR0
+MAR, draw
+JMP
+
+draw:
+MAR, color;  Lädt AR mit den nächsten beiden Bytes.
+LR0
+MAR, drawblue
+JE0, $00
+MAR, drawyellow
+JMP
+
+
+
+drawblue:
+MAR, lineselector
+LRW
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+LRW ; Lädt R1 aus der in AR angegebenen Adresse, ferner R2 aus der Adresse dahinter
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+
+; Setzt Bit für Weiß
+MR0, $01
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
+MR0, $40
+AAR
+MR0, $01
+SR0
+MR0, $40
+AAR
+MR0, $01
+SR0
+MR0, $40
+AAR
+MR0, $01
+SR0
+MR0, $40
+AAR
+MR0, $01
+SR0
+
+MAR, drawback
+JMP
+
+drawyellow:
+MAR, lineselector
+LRW
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+LRW ; Lädt R1 aus der in AR angegebenen Adresse, ferner R2 aus der Adresse dahinter
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+
+; Setzt Bit für Weiß
+MR0, $00
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
+MR0, $40
+AAR
+MR0, $00
+SR0
+MR0, $40
+AAR
+MR0, $00
+SR0
+MR0, $40
+AAR
+MR0, $00
+SR0
+MR0, $40
+AAR
+MR0, $00
+SR0
+
+MAR, drawback
+JMP
+
+
+drawback:
+MAR, lineselector
+LRW
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+LRW ; Lädt R1 aus der in AR angegebenen Adresse, ferner R2 aus der Adresse dahinter
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+
+MR0, $FF
+AAR
+AAR
+AAR
+AAR
+AAR
+AAR
+AAR
+AAR
+AAR
+AAR
+AAR
+AAR
+AAR
+AAR
+AAR
+AAR
+MR0, $10
+AAR
+
+; Setzt Bit für Weiß
+MR0, $01
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
+MR0, $40
+AAR
+MR0, $01
+SR0
+MR0, $40
+AAR
+MR0, $01
+SR0
+MR0, $40
+AAR
+MR0, $01
+SR0
+MR0, $40
+AAR
+MR0, $01
+SR0
+
+MAR, $000A ; DRAW
+MR0, $01 ; DRAW
+SR0 ; DRAW
+
+MAR, drawmanager
+JMP
+
+
+cleanup:
+
+MAR, lineselector
+LRW
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+LRW ; Lädt R1 aus der in AR angegebenen Adresse, ferner R2 aus der Adresse dahinter
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+
+; Setzt Bit für Weiß
+MR0, $00
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
+MR0, $40
+AAR
+MR0, $00
+SR0
+MR0, $40
+AAR
+MR0, $00
+SR0
+MR0, $40
+AAR
+MR0, $00
+SR0
+MR0, $40
+AAR
+MR0, $00
+SR0
+
+
+
+MAR, lineselector
+LRW
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+LRW ; Lädt R1 aus der in AR angegebenen Adresse, ferner R2 aus der Adresse dahinter
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+
+MR0, $FF
+AAR
+AAR
+AAR
+AAR
+AAR
+AAR
+AAR
+AAR
+AAR
+AAR
+AAR
+AAR
+AAR
+AAR
+AAR
+AAR
+MR0, $10
+AAR
+
+; Setzt Bit für Weiß
+MR0, $00
+SR0 ; Speichert R0 an die in AR angegebene Adresse.
+MR0, $40
+AAR
+MR0, $00
+SR0
+MR0, $40
+AAR
+MR0, $00
+SR0
+MR0, $40
+AAR
+MR0, $00
+SR0
+MR0, $40
+AAR
+MR0, $00
+SR0
+
+MAR, artemp ;  Lädt AR mit den nächsten beiden Bytes.
+LRW ; Lädt R1 aus der in AR angegebenen Adresse, ferner R2 aus der Adresse dahinter
+RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
+JMP
+
+
+
+
+switchcolor:
+MAR, $0020
+LR0
+
+MAR, switchcolor;
+JE0, $10 ;
+
+MAR, color;  Lädt AR mit den nächsten beiden Bytes.
+LR0
+MAR, setblue
+JE0, $00
+MAR, setyellow
+JMP
+
+
+setblue:
+MAR, color;  Lädt AR mit den nächsten beiden Bytes.
+MR0, $01
+SR0
+
+MAR, drawline1
+LR0
+IR0
+SR0
+
+MAR, drawline2
+LR0
+IR0
+SR0
+
+MAR, drawmanager
+JMP
+
+setyellow:
+MAR, color;  Lädt AR mit den nächsten beiden Bytes.
+MR0, $00
+SR0
+
+MAR, drawline1
+LR0
+IR0
+SR0
+
+MAR, drawline2
+LR0
+IR0
+SR0
+
+MAR, drawmanager
+JMP
+
+
+line1: DAT $A1 x 2
+DAT $EE
+line2: DAT $A2 x 2
+DAT $EE
+drawline1: DAT $01
+DAT $EE
+drawline2: DAT $01
+DAT $EE
+lineselector: DAT $11 x 2
+DAT $EE
+count1: DAT $21
+DAT $EE
+count2: DAT $21
+DAT $EE
+color: DAT $01
+DAT $EE
+artemp: DAT $CC x 2
+DAT $EE
+
+
+.pad $DFFF
+DAT $01 x 40
+
+
