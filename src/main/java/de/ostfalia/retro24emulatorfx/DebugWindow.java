@@ -1,5 +1,8 @@
 package de.ostfalia.retro24emulatorfx;
 
+import de.ostfalia.util.Event;
+import de.ostfalia.util.EventBus;
+import de.ostfalia.util.EventType;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -20,7 +23,6 @@ import java.util.List;
 
 public class DebugWindow{
 
-    private final Emulator emulator;
     private final CPU cpu;
     private final Memory memory;
     private final Timeline gameLoop;
@@ -28,10 +30,8 @@ public class DebugWindow{
     private boolean isPaused = true;
     private Stage debugStage;
     public static final List<Stage> memoryWindows = new ArrayList<>();
-    private double clockSpeed = 0.01;
 
-    public DebugWindow(Emulator emulator, CPU cpu, Memory memory, Timeline gameLoop) {
-        this.emulator = emulator;
+    public DebugWindow(CPU cpu, Memory memory, Timeline gameLoop) {
         this.cpu = cpu;
         this.memory = memory;
         this.gameLoop = gameLoop;
@@ -66,14 +66,12 @@ public class DebugWindow{
                 }
                 memoryWindows.clear();
 
-                gameLoop.play();
+                if(gameLoop.getStatus() == Timeline.Status.STOPPED || gameLoop.getStatus() == Timeline.Status.PAUSED){
+                    gameLoop.play();
+                }
             });
 
-            gameLoop.pause();
-
             debugStage.show();
-
-            // Initiales Laden der Debug-Informationen
             updateDebugInfo();
         } else {
             debugStage.toFront();
@@ -104,7 +102,7 @@ public class DebugWindow{
         Button startButton = new Button("Start");
         Button pauseButton = new Button("Pause");
         Button stepButton = new Button("Step");
-        Button handbrakeButton = new Button("Change to 1kHz");
+        Button handbrakeButton = new Button("Change to 100Hz");
 
         startButton.setOnAction(e -> startLoop());
         pauseButton.setOnAction(e -> pauseLoop());
@@ -112,13 +110,14 @@ public class DebugWindow{
         handbrakeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if (handbrakeButton.getText().equals("Change to 1kHz")) {
-                    handbrakeButton.setText("Change to 100Hz");
-                } else {
+                if (handbrakeButton.getText().equals("Change to 100Hz")) {
                     handbrakeButton.setText("Change to 1kHz");
+                } else {
+                    handbrakeButton.setText("Change to 100Hz");
                 }
 
-                changeClockSpeed();
+                Event changeClockSpeedEvent = new Event(EventType.CLOCK_SPEED_CHANGED);
+                EventBus.getInstance().notifyObservers(changeClockSpeedEvent);
             }
         });
 
@@ -148,10 +147,9 @@ public class DebugWindow{
 
     // Methode zum Schrittweisen Ausführen
     private void stepLoop() {
-        // Einmal ausführen und danach stoppen
-        KeyFrame keyFrame = gameLoop.getKeyFrames().get(0);  // Holen des ersten KeyFrames
+        KeyFrame keyFrame = gameLoop.getKeyFrames().get(0);
         if (keyFrame != null) {
-            keyFrame.getOnFinished().handle(null);  // Aktion manuell ausführen
+            keyFrame.getOnFinished().handle(null);
         }
         gameLoop.stop();
         isPaused = true;
@@ -159,7 +157,7 @@ public class DebugWindow{
 
     // Methode zum Aktualisieren der Debug-Informationen
     public void updateDebugInfo() {
-        debugTextBox.getChildren().clear(); // Vorherigen Text löschen
+        debugTextBox.getChildren().clear();
 
         // CPU-Debug-Informationen
         debugTextBox.getChildren().add(new Text("CPU State:"));
@@ -193,8 +191,6 @@ public class DebugWindow{
         Stage memorySnapWindow = new Stage();
 
         memoryWindows.add(memorySnapWindow);
-
-        //int ttt = end - start;
 
         ListView<String> memoryListView = new ListView<>();
 
@@ -250,18 +246,5 @@ public class DebugWindow{
 
     private void changeClockSpeed() {
 
-        if (clockSpeed == 0.01){
-            clockSpeed = 0.0001;
-        } else {
-            clockSpeed = 0.01;
-        }
-
-        if(isPaused){
-            emulator.changeClockSpeed(clockSpeed);
-        }else {
-            pauseLoop();
-            emulator.changeClockSpeed(clockSpeed);
-            startLoop();
-        }
     }
 }

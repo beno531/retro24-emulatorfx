@@ -1,5 +1,9 @@
 package de.ostfalia.retro24emulatorfx;
 
+import de.ostfalia.util.Event;
+import de.ostfalia.util.EventBus;
+import de.ostfalia.util.EventObserver;
+import de.ostfalia.util.EventType;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -7,7 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-public class Emulator extends Application {
+public class Emulator extends Application implements EventObserver {
     private Timeline gameLoop;
     private Stage mainStage;
     private Memory memory;
@@ -17,6 +21,7 @@ public class Emulator extends Application {
     private MainWindow mainWindow;
     private DebugWindow debugWindow;
     private KeyFrame kf;
+    private double clockSpeed = 0.0001;
 
     private void initialize() {
         memory = new Memory();
@@ -33,51 +38,75 @@ public class Emulator extends Application {
         memory.setTitle();
         ppu.render();
 
-
         gameLoop = new Timeline();
         gameLoop.setCycleCount(Timeline.INDEFINITE);
+        setClockSpeed(clockSpeed);
 
-
-        kf = new KeyFrame(
-                Duration.seconds(0.01),  // 100 Hz => 0.01 Sekunden = 10 Millisekunden
-                this::handleAction
-        );
-
-
-        gameLoop.getKeyFrames().add(kf);
-
-        debugWindow = new DebugWindow(this, cpu, memory, gameLoop);
-
+        debugWindow = new DebugWindow(cpu, memory, gameLoop);
         mainWindow = new MainWindow(mainStage, cpu, memory, ppu, loader, gameLoop, debugWindow);
     }
 
-    private void handleAction(ActionEvent event) {
+    private void mainLoop(ActionEvent event) {
 
         mainWindow.setIoRefreshable(true);
 
         if (!cpu.getHlt()){
             cpu.tick();
-
         }
 
         if (ppu.isDrawFlag()){
             ppu.render();
-            // Setzt DrawFlag auf False;
-            memory.write(0x000A, 0x00);
+            resetDrawFlag();
         }
 
-       System.out.println( memory.read(0x0020));
-
-        mainWindow.updateDebugInfo();
-        //memory.write(0x0020, 0x00);
+        debugWindow.updateDebugInfo();
     }
 
-    public void changeClockSpeed(double speed){
+    private void resetDrawFlag(){
+        memory.write(0x000A, 0x00);
+    }
+
+    @Override
+    public void handleEvent(Event event) {
+        if (event.getType() == EventType.CLOCK_SPEED_CHANGED) {
+            changeClockSpeed();
+        }
+    }
+
+    private void changeClockSpeed(){
+
+        if (clockSpeed == 0.01){
+            clockSpeed = 0.0001;
+        } else {
+            clockSpeed = 0.01;
+        }
+
+        setClockSpeed(clockSpeed);
+    }
+
+    private void setClockSpeed(double speed){
+
+        var wasRunning = false;
+
+        if(gameLoop.getStatus() == Timeline.Status.RUNNING){
+            gameLoop.stop();
+            wasRunning = true;
+        }
+
         kf = new KeyFrame(
-                Duration.seconds(speed),  // 100 Hz => 0.01 Sekunden = 10 Millisekunden
-                this::handleAction
+                Duration.seconds(speed),
+                this::mainLoop
         );
-        gameLoop.getKeyFrames().set(0, kf);
+
+        if(gameLoop.getKeyFrames().isEmpty()){
+            gameLoop.getKeyFrames().add(kf);
+        } else {
+            gameLoop.getKeyFrames().set(0, kf);
+        }
+
+        if(wasRunning){
+            gameLoop.play();
+        }
     }
 
     public static void main(String[] args) {
@@ -86,6 +115,7 @@ public class Emulator extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        EventBus.getInstance().registerObserver(this);
         mainStage = primaryStage;
         initialize();
     }

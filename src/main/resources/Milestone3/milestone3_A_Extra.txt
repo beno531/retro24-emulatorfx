@@ -1,148 +1,14 @@
 .base $0100               ; Fester Programmstart nach Reset
 
 
-MAR, $000A ; DRAW
-MR0, $01 ; DRAW
-SR0 ; DRAW
-
-
-prestart:
-MAR, $0020
-LR0
-
-MAR, loop_y;
-JE0, $10 ;
-
-MAR, prestart
-JMP
-
-
-
-loop_y:
-MAR, county
-LR0
-
-MAR, end
-JE0, $11
-
-loop_x:
-MAR, countx
-LR0
-
-MAR, loop_y_end
-JE0, $04
-
-
-MAR, artemp
-LRW
-RAR
-
-MR0, $00
-SR0
-MR0, $01
-AAR
-MR0, $00
-SR0
-MR0, $01
-AAR
-MR0, $00
-SR0
-MR0, $01
-AAR
-MR0, $00
-SR0
-MR0, $01
-AAR
-MR0, $00
-SR0
-MR0, $01
-AAR
-MR0, $00
-SR0
-MR0, $01
-AAR
-MR0, $00
-SR0
-MR0, $01
-AAR
-MR0, $00
-SR0
-MR0, $01
-AAR
-MR0, $00
-SR0
-MR0, $01
-AAR
-MR0, $00
-SR0
-MR0, $01
-AAR
-MR0, $00
-SR0
-MR0, $01
-AAR
-MR0, $00
-SR0
-MR0, $01
-AAR
-MR0, $00
-SR0
-MR0, $01
-AAR
-MR0, $00
-SR0
-MR0, $01
-AAR
-MR0, $00
-SR0
-MR0, $01
-AAR
-MR0, $00
-SR0
-MR0, $01
-AAR
-
-TAW
-MAR, artemp
-SRW
-
-MAR, $000A ; DRAW
-MR0, $01 ; DRAW
-SR0 ; DRAW
-
-
-MAR, countx
-LR0
-IR0
-SR0
-
-MAR, loop_x
-JMP
-
-loop_y_end:
-
-MAR, countx
-MR0, $00
-SR0
-
-MAR, county
-LR0
-IR0
-SR0
-
-MAR, loop_y
-JMP
-
-end:
-
 ; Speichert Startpunkt im line1 +1
-MAR, $E00F
+MAR, $E80F
 TAW ; AR wird nach R1/R2 kopiert
 MAR, line1 ;  Lädt AR mit den nächsten beiden Bytes.
 SRW ; Speichert R1 an die in AR angegebene Adresse, ferner R2 an die Adresse dahinter.
 
 ; Speichert Startpunkt im line1 +1
-MAR, $E031
+MAR, $E831
 TAW ; AR wird nach R1/R2 kopiert
 MAR, line2 ;  Lädt AR mit den nächsten beiden Bytes.
 SRW ; Speichert R1 an die in AR angegebene Adresse, ferner R2 an die Adresse dahinter.
@@ -259,6 +125,8 @@ LR0
 
 C01 ; Kopiert R0 nach R1.
 
+NUL
+
 MR0, $BF
 IR0 ; Erhöht den Wert von R0 um 1
 A01 ; Addiert R0 auf R1
@@ -295,7 +163,7 @@ MAR, count1;  Lädt AR mit den nächsten beiden Bytes.
 LR0
 IR0
 MAR, loop
-JE0, $34
+JE0, $3D
 MAR, count1;
 SR0
 
@@ -309,7 +177,7 @@ TAW ; AR wird nach R1/R2 kopiert
 MAR, lineselector ;  Lädt AR mit den nächsten beiden Bytes.
 SRW ; Speichert R1 an die in AR angegebene Adresse, ferner R2 an die Adresse dahinter.
 
-MAR, movedown
+MAR, cleanup
 JMP
 
 
@@ -324,7 +192,7 @@ MAR, count2;  Lädt AR mit den nächsten beiden Bytes.
 LR0
 IR0
 MAR, loop
-JE0, $34
+JE0, $3D
 MAR, count2;
 SR0
 
@@ -338,7 +206,7 @@ TAW ; AR wird nach R1/R2 kopiert
 MAR, lineselector ;  Lädt AR mit den nächsten beiden Bytes.
 SRW ; Speichert R1 an die in AR angegebene Adresse, ferner R2 an die Adresse dahinter.
 
-MAR, movedown
+MAR, cleanup
 JMP
 
 
@@ -647,110 +515,22 @@ MAR, setyellow
 JMP
 
 
-
-
 setblue:
 MAR, color;  Lädt AR mit den nächsten beiden Bytes.
 MR0, $01
 SR0
 
-MAR, $E00F
-TAW ; AR wird nach R1/R2 kopiert
-MAR, artemp;  Lädt AR mit den nächsten beiden Bytes.
-SRW ;
-
-MAR, counttemp
-MR0, $00
-SR0
-
-redrawbluel1:
-MAR, artemp ;  Lädt AR mit den nächsten beiden Bytes.
-LRW ; Lädt R1 aus der in AR angegebenen Adresse, ferner R2 aus der Adresse dahinter
-RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
-
-MR0, $00
-SR0
-MR0, $40
-AAR
-
-TAW ; AR wird nach R1/R2 kopiert
-MAR, artemp ;  Lädt AR mit den nächsten beiden Bytes.
-SRW
-
-
-MAR, counttemp
+MAR, drawline1
 LR0
 IR0
-C01
 SR0
 
-MAR, count1
+MAR, drawline2
 LR0
 IR0
-IR0
-IR0
-IR0
-C02
-
-MAR, endredrawbluel1
-JEW
-
-MAR, redrawbluel1
-JMP
-
-endredrawbluel1:
-
-MAR, $E031
-TAW ; AR wird nach R1/R2 kopiert
-MAR, artemp;  Lädt AR mit den nächsten beiden Bytes.
-SRW ;
-
-MAR, counttemp
-MR0, $00
 SR0
 
-redrawbluel2:
-MAR, artemp ;  Lädt AR mit den nächsten beiden Bytes.
-LRW ; Lädt R1 aus der in AR angegebenen Adresse, ferner R2 aus der Adresse dahinter
-RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
-
-MR0, $00
-SR0
-MR0, $40
-AAR
-
-TAW ; AR wird nach R1/R2 kopiert
-MAR, artemp ;  Lädt AR mit den nächsten beiden Bytes.
-SRW
-
-
-MAR, counttemp
-LR0
-IR0
-C01
-SR0
-
-MAR, count2
-LR0
-IR0
-IR0
-IR0
-IR0
-C02
-
-MAR, endredrawbluel2
-JEW
-
-MAR, redrawbluel2
-JMP
-
-endredrawbluel2:
-
-MAR, $000A ; DRAW
-MR0, $01 ; DRAW
-SR0 ; DRAW
-
-MAR, loop
+MAR, drawmanager
 JMP
 
 setyellow:
@@ -758,103 +538,17 @@ MAR, color;  Lädt AR mit den nächsten beiden Bytes.
 MR0, $00
 SR0
 
-MAR, $E00F
-TAW ; AR wird nach R1/R2 kopiert
-MAR, artemp;  Lädt AR mit den nächsten beiden Bytes.
-SRW ;
-
-MAR, counttemp
-MR0, $00
-SR0
-
-redrawyellowl1:
-MAR, artemp ;  Lädt AR mit den nächsten beiden Bytes.
-LRW ; Lädt R1 aus der in AR angegebenen Adresse, ferner R2 aus der Adresse dahinter
-RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
-
-MR0, $01
-SR0
-MR0, $40
-AAR
-
-TAW ; AR wird nach R1/R2 kopiert
-MAR, artemp ;  Lädt AR mit den nächsten beiden Bytes.
-SRW
-
-
-MAR, counttemp
+MAR, drawline1
 LR0
 IR0
-C01
 SR0
 
-MAR, count1
+MAR, drawline2
 LR0
 IR0
-IR0
-IR0
-IR0
-C02
-
-MAR, endredrawyellowl1
-JEW
-
-MAR, redrawyellowl1
-JMP
-
-endredrawyellowl1:
-
-MAR, $E031
-TAW ; AR wird nach R1/R2 kopiert
-MAR, artemp;  Lädt AR mit den nächsten beiden Bytes.
-SRW ;
-
-MAR, counttemp
-MR0, $00
 SR0
 
-redrawyellowl2:
-MAR, artemp ;  Lädt AR mit den nächsten beiden Bytes.
-LRW ; Lädt R1 aus der in AR angegebenen Adresse, ferner R2 aus der Adresse dahinter
-RAR ; R1 (als LO) und R2 (als HI) werden ins AR kopiert.
-
-MR0, $01
-SR0
-MR0, $40
-AAR
-
-TAW ; AR wird nach R1/R2 kopiert
-MAR, artemp ;  Lädt AR mit den nächsten beiden Bytes.
-SRW
-
-
-MAR, counttemp
-LR0
-IR0
-C01
-SR0
-
-MAR, count2
-LR0
-IR0
-IR0
-IR0
-IR0
-C02
-
-MAR, endredrawyellowl2
-JEW
-
-MAR, redrawyellowl2
-JMP
-
-endredrawyellowl2:
-
-MAR, $000A ; DRAW
-MR0, $01 ; DRAW
-SR0 ; DRAW
-
-MAR, loop
+MAR, drawmanager
 JMP
 
 
@@ -868,99 +562,11 @@ drawline2: DAT $01
 DAT $EE
 lineselector: DAT $11 x 2
 DAT $EE
-count1: DAT $01
+count1: DAT $21
 DAT $EE
-count2: DAT $01
+count2: DAT $21
 DAT $EE
 color: DAT $01
 DAT $EE
-artemp: DAT $C0, $E5
+artemp: DAT $CC x 2
 DAT $EE
-counttemp: DAT $00 x 1
-DAT $EE
-countx: DAT $00
-DAT $EE
-county: DAT $00
-DAT $EE
-
-.pad $DFFF
-
-DAT $00 x 1472
-
-DAT $00 x 17
-DAT $01, $01, $01, $01, $00, $00, $01, $01, $01, $01, $00, $00, $01, $01, $01, $01, $01, $00, $00, $01, $01, $01, $01, $00, $00, $01, $01, $01, $01
-DAT $00 x 18
-
-
-DAT $00 x 17
-DAT $01 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1
-DAT $00 x 18
-
-
-DAT $00 x 17
-DAT $01 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1
-DAT $00 x 18
-
-
-DAT $00 x 17
-DAT $01 x 1, $01 x 1, $01 x 1, $01 x 1, $00 x 1, $00 x 1, $01 x 1, $01 x 1, $01 x 1, $01 x 1, $00 x 1, $00 x 1, $01 x 1, $01 x 1, $01 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $01 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $01 x 1, $01 x 1, $00 x 1
-DAT $00 x 18
-
-
-DAT $00 x 17
-DAT $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1
-DAT $00 x 18
-
-
-DAT $00 x 17
-DAT $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1
-DAT $00 x 18
-
-
-DAT $00 x 17
-DAT $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $01 x 1, $01 x 1, $01 x 1, $01 x 1, $01 x 1, $00 x 1, $01 x 1, $01 x 1, $01 x 1, $01 x 1, $00 x 1, $00 x 1, $01 x 1, $01 x 1, $01 x 1, $01 x 1, $00 x 1
-DAT $00 x 18
-
-DAT $00 x 64
-
-DAT $00 x 17
-DAT $01 x 29
-DAT $00 x 18
-
-DAT $00 x 64
-
-
-DAT $00 x 17
-DAT $00 x 1, $01 x 1, $01 x 1, $01 x 1, $01 x 1, $00 x 1, $01 x 1, $01 x 1, $01 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $01 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $01 x 1, $01 x 1, $00 x 1, $00 x 1, $01 x 1, $01 x 1, $01 x 1, $01 x 1, $01 x 1
-DAT $00 x 18
-
-
-DAT $00 x 17
-DAT $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1
-DAT $00 x 18
-
-
-DAT $00 x 17
-DAT $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1
-DAT $00 x 18
-
-
-DAT $00 x 17
-DAT $00 x 1, $01 x 1, $01 x 1, $01 x 1, $00 x 1, $00 x 1, $01 x 1, $01 x 1, $01 x 1, $01 x 1, $00 x 1, $00 x 1, $01 x 1, $01 x 1, $01 x 1, $01 x 1, $01 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $01 x 1, $01 x 1, $01 x 1, $00 x 1
-DAT $00 x 18
-
-
-DAT $00 x 17
-DAT $00 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1
-DAT $00 x 18
-
-
-DAT $00 x 17
-DAT $00 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1
-DAT $00 x 18
-
-
-DAT $00 x 17
-DAT $01 x 1, $01 x 1, $01 x 1, $01 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $00 x 1, $01 x 1, $00 x 1, $00 x 1, $01 x 1, $01 x 1, $01 x 1, $00 x 1, $00 x 1, $01 x 1, $01 x 1, $01 x 1, $01 x 1, $01 x 1
-DAT $00 x 18
-

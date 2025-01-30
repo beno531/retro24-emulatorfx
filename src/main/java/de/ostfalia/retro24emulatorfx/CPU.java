@@ -63,8 +63,6 @@ public class CPU {
         incrTickByte();
         decrTockByte();
 
-        //debugOut(opcode);
-
         Runnable instruction = opcodeMap.get(currentOpcode);
 
         if (instruction != null) {
@@ -77,25 +75,6 @@ public class CPU {
 
     public void connectMemory(Memory memory) {
         this.memory = memory;
-    }
-
-    private void debugOut(int opcode){
-
-        System.out.print("----------------------------------------- \n");
-
-        System.out.printf("Execute Opcode: 0x%02X%n", opcode);
-
-        System.out.printf("AR: 0x%04X%n", this.ar);
-        System.out.printf("IC: 0x%04X%n", this.ic);
-
-        System.out.printf("R0: 0x%02X%n", this.r0);
-        System.out.printf("R1: 0x%02X%n", this.r1);
-        System.out.printf("R2: 0x%02X%n", this.r2);
-        System.out.printf("R3: 0x%02X%n", this.r3);
-
-        System.out.println("isHlt: " + this.hlt);
-        System.out.println("Tick-Byte: " + getTickByte());
-        System.out.println("Tock-Byte: " + getTockByte());
     }
 
     // --- Getter/ Setter ---
@@ -179,10 +158,6 @@ public class CPU {
         int tockVal = memory.read(0x0011);
         tockVal = tockVal - 1 & 0xFF;
         memory.write(0x0011, tockVal);
-    }
-
-    public void incrAr(int i){
-        ar = (ar + i) & 0xFFFF;
     }
 
     public void incrIc(int i){

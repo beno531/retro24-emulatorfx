@@ -1,5 +1,6 @@
 package de.ostfalia.retro24emulatorfx;
 
+import javafx.animation.Animation;
 import javafx.animation.Timeline;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
@@ -58,6 +59,12 @@ public class MainWindow {
             hardReset();
         });
 
+        // Menüpunkt "Reload"
+        MenuItem reloadItem = new MenuItem("Reload Bin");
+        reloadItem.setOnAction(e -> {
+            reload();
+        });
+
         // Menüpunkt "Show Debug Window"
         MenuItem debugItem = new MenuItem("Debug Window");
         debugItem.setOnAction(e -> {
@@ -72,6 +79,7 @@ public class MainWindow {
 
         menuFile.getItems().add(loadRomItem);
         menuFile.getItems().add(resetItem);
+        menuFile.getItems().add(reloadItem);
         menuFile.getItems().add(debugItem);
         menuFile.getItems().add(exitItem);
 
@@ -87,8 +95,6 @@ public class MainWindow {
 
             if (isIoRefreshable){
                 KeyCode keyCode = event.getCode();
-
-                //System.out.println("Key pressed: " + keyCode.getName());
 
                 if (keyCode == KeyCode.W || keyCode == KeyCode.UP) {
                     memory.write(0x0020, 0b00000001);
@@ -107,7 +113,6 @@ public class MainWindow {
         });
 
         mainScene.setOnKeyReleased(event -> {
-            // Taste wird losgelassen, daher zurücksetzen der Variable
             memory.write(0x0020, 0x00);
         });
 
@@ -135,6 +140,9 @@ public class MainWindow {
 
     private void showDebugWindow() {
         debugWindow.show();
+        if(gameLoop.getStatus() == Timeline.Status.RUNNING){
+            gameLoop.stop();
+        }
     }
 
     private void loadProgram(String program) {
@@ -161,8 +169,14 @@ public class MainWindow {
         ppu.render();
     }
 
+    private void reload() {
+        if(loader.isTempProgramSet()) {
+            softReset();
+            loader.writeProgram();
 
-    public void updateDebugInfo() {
-        debugWindow.updateDebugInfo();
+            if (!debugWindow.isShowing()) {
+                gameLoop.play();
+            }
+        }
     }
 }

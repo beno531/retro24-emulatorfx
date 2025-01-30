@@ -6,20 +6,22 @@ import java.io.IOException;
 
 public class Loader {
     private Memory memory;
+    private int[] tempProgram;
 
     public void connectMemory(Memory memory) {
         this.memory = memory;
     }
 
-    public void writeProgram(int[] program) {
+    public void writeProgram() {
 
-        int counter = 0X0100;
+        if(tempProgram != null){
 
-        for (int val : program) {
-            memory.write(counter, val);
-            counter++;
+            int counter = 0X0100;
 
-            // Prüfen ob max. erreicht ist
+            for (int val : tempProgram) {
+                memory.write(counter, val);
+                counter++;
+            }
         }
     }
 
@@ -46,10 +48,20 @@ public class Loader {
                 intArray[i] = byteArray[i] & 0xFF;
             }
 
-            writeProgram(intArray);
+            tempProgram = intArray;
+
+            writeProgram();
 
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public boolean isTempProgramSet() {
+        if(tempProgram != null){
+            return true;
+        }else {
+            return false;
         }
     }
 }
