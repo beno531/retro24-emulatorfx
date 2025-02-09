@@ -158,16 +158,16 @@ MAR, $0020
 LR0
 
 MAR, premovedownl1;
-JE0, $02 ;
-
-MAR, premovedownl2;
-JE0, $08 ;
-
-MAR, premoveupl1;
 JE0, $01 ;
 
-MAR, premoveupl2;
+MAR, premovedownl2;
 JE0, $04 ;
+
+MAR, premoveupl1;
+JE0, $02 ;
+
+MAR, premoveupl2;
+JE0, $08 ;
 
 MAR, switchcolor;
 JE0, $10 ;

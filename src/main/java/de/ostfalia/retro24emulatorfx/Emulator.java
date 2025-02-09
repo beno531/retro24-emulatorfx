@@ -46,12 +46,13 @@ public class Emulator extends Application implements EventObserver {
         mainWindow = new MainWindow(mainStage, cpu, memory, ppu, loader, gameLoop, debugWindow);
     }
 
+    // Hauptroutine des Emulators; Wird mittels Timeline gesteuert
     private void mainLoop(ActionEvent event) {
 
         mainWindow.setIoRefreshable(true);
 
         if (!cpu.getHlt()){
-            cpu.tick();
+            cpu.cycle();
         }
 
         if (ppu.isDrawFlag()){
@@ -115,7 +116,9 @@ public class Emulator extends Application implements EventObserver {
 
     @Override
     public void start(Stage primaryStage) {
+        // Emulator als Observer registrieren für CLOCK_SPEED_CHANGED Event
         EventBus.getInstance().registerObserver(this);
+
         mainStage = primaryStage;
         initialize();
     }

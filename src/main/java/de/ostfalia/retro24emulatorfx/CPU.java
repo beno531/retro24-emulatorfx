@@ -56,7 +56,8 @@ public class CPU {
         opcodeMap.put(0xFF, this::hlt); // HLT ($FF, 1-Byte-OP): Prozessor hält an
     }
 
-    public void tick() {
+    // Methode simuliert einen Takt der CPU
+    public void cycle() {
 
         currentOpcode = memory.read(ic);
 
@@ -78,8 +79,6 @@ public class CPU {
     }
 
     // --- Getter/ Setter ---
-
-
     public int getCurrentOpcode() {
         return currentOpcode;
     }

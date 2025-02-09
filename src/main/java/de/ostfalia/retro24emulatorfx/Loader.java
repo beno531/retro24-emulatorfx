@@ -12,7 +12,7 @@ public class Loader {
         this.memory = memory;
     }
 
-    public void writeProgram() {
+    public void writeProgramIntoMemory() {
 
         if(tempProgram != null){
 
@@ -25,7 +25,7 @@ public class Loader {
         }
     }
 
-    public void writeProgram(String filePath) {
+    public void readProgram(String filePath) {
 
         File file = new File(filePath);
 
@@ -42,7 +42,6 @@ public class Loader {
         try (FileInputStream fis = new FileInputStream(file)) {
             byte[] byteArray = fis.readAllBytes();
 
-            // Konvertiere byte[] zu int[]
             int[] intArray = new int[byteArray.length];
             for (int i = 0; i < byteArray.length; i++) {
                 intArray[i] = byteArray[i] & 0xFF;
@@ -50,7 +49,7 @@ public class Loader {
 
             tempProgram = intArray;
 
-            writeProgram();
+            writeProgramIntoMemory();
 
         } catch (IOException e) {
             throw new RuntimeException(e);

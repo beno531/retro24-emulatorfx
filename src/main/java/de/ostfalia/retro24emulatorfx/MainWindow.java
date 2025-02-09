@@ -1,6 +1,5 @@
 package de.ostfalia.retro24emulatorfx;
 
-import javafx.animation.Animation;
 import javafx.animation.Timeline;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
@@ -107,8 +106,6 @@ public class MainWindow {
                 }else if (keyCode == KeyCode.SPACE) {
                     memory.write(0x0020, 0b00010000);
                 }
-
-                //isIoRefreshable = false;
             }
         });
 
@@ -135,7 +132,6 @@ public class MainWindow {
     public void setIoRefreshable(boolean ioRefreshable) {
 
         isIoRefreshable = ioRefreshable;
-        //memory.write(0x0020, 0x00);
     }
 
     private void showDebugWindow() {
@@ -147,7 +143,7 @@ public class MainWindow {
 
     private void loadProgram(String program) {
         softReset();
-        loader.writeProgram(program);
+        loader.readProgram(program);
 
         if (!debugWindow.isShowing()) {
             gameLoop.play();
@@ -172,7 +168,7 @@ public class MainWindow {
     private void reload() {
         if(loader.isTempProgramSet()) {
             softReset();
-            loader.writeProgram();
+            loader.writeProgramIntoMemory();
 
             if (!debugWindow.isShowing()) {
                 gameLoop.play();

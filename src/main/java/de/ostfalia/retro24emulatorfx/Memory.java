@@ -105,58 +105,6 @@ public class Memory {
         };
 
 
-        // Delete maybe
-
-
-        int[][] letterP = {
-                {1, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 1, 1, 1, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0}
-        };
-
-        int[][] letterS = {
-                {0, 1, 1, 1, 1},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {0, 1, 1, 1, 0},
-                {0, 0, 0, 0, 1},
-                {0, 0, 0, 0, 1},
-                {1, 1, 1, 1, 0}
-        };
-        int[][] letterA = {
-                {0, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 1, 1, 1, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1}
-        };
-
-        int[][] letterC = {
-                {0, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 1},
-                {0, 1, 1, 1, 0}
-        };
-
-
-
-        /*
-        writeChars(letterP, 14, 25);
-        writeChars(letterS, 20, 25);
-        writeChars(letterA, 26, 25);
-        writeChars(letterC, 32, 25);
-         */
-
-
         writeChars(letterR, 14, 25);
         writeChars(letterE, 20, 25);
         writeChars(letterT, 26, 25);
@@ -181,9 +129,5 @@ public class Memory {
         Arrays.fill(video, 0x00);
         Arrays.fill(program, 0xFF);
         Arrays.fill(io, 0x00);
-    }
-
-    public int[] getProgram() {
-        return program;
     }
 }

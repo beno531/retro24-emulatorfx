@@ -27,7 +27,6 @@ public class DebugWindow{
     private final Memory memory;
     private final Timeline gameLoop;
     private final VBox debugTextBox;
-    private boolean isPaused = true;
     private Stage debugStage;
     public static final List<Stage> memoryWindows = new ArrayList<>();
 
@@ -35,7 +34,7 @@ public class DebugWindow{
         this.cpu = cpu;
         this.memory = memory;
         this.gameLoop = gameLoop;
-        this.debugTextBox = new VBox(5); // Abstand zwischen den Zeilen
+        this.debugTextBox = new VBox(5);
     }
 
     public void show() {
@@ -51,7 +50,7 @@ public class DebugWindow{
             VBox memorySnaphotControlBox = buildMemorySnapshotControlBox();
 
 
-            VBox layout = new VBox(10); // Abstand zwischen den Elementen
+            VBox layout = new VBox(10);
             layout.setPadding(new Insets(10, 10, 10, 10));
             layout.getChildren().addAll(cpuControlsBox, memorySnaphotControlBox, debugTextBox);
 
@@ -133,26 +132,25 @@ public class DebugWindow{
 
     // Methode zum Starten des Loops
     private void startLoop() {
-        if (isPaused) {
-            gameLoop.play();  // Resume the game loop
-            isPaused = false;
+        if(gameLoop.getStatus() == Timeline.Status.STOPPED || gameLoop.getStatus() == Timeline.Status.PAUSED){
+            gameLoop.play();
         }
     }
 
     // Methode zum Pausieren des Loops
     public void pauseLoop() {
-        gameLoop.stop();  // Pause the game loop
-        isPaused = true;
+        if(gameLoop.getStatus() == Timeline.Status.RUNNING || gameLoop.getStatus() == Timeline.Status.PAUSED){
+            gameLoop.stop();
+        }
     }
 
-    // Methode zum Schrittweisen Ausführen
+    // Methode zum Schrittweisen Ausführen des Loops
     private void stepLoop() {
         KeyFrame keyFrame = gameLoop.getKeyFrames().get(0);
         if (keyFrame != null) {
             keyFrame.getOnFinished().handle(null);
         }
         gameLoop.stop();
-        isPaused = true;
     }
 
     // Methode zum Aktualisieren der Debug-Informationen
@@ -194,11 +192,9 @@ public class DebugWindow{
 
         ListView<String> memoryListView = new ListView<>();
 
-        // Zeilenweise Ausgabe von 16 Speicherzellen
         StringBuilder line = new StringBuilder();
         for (int i = start; i <= end; i++) {
             if ((i - start) % 16 == 0) {
-                // Wenn i ein Vielfaches von 16 ist, fügen wir die aktuelle Zeile in die ListView ein
                 if (i > start) {
                     memoryListView.getItems().add(line.toString());
                     line = new StringBuilder();  // Zeile zurücksetzen
@@ -206,11 +202,9 @@ public class DebugWindow{
                 // Starten einer neuen Zeile
                 line.append(String.format("0x%04X: ", i));
             }
-            // Speicherwert zur Zeile hinzufügen
             line.append(String.format("0x%02X ", memory.read(i)));
         }
 
-        // Die letzte Zeile hinzufügen
         memoryListView.getItems().add(line.toString());
 
         memoryListView.setCellFactory(list -> new ListCell<String>() {
@@ -219,21 +213,18 @@ public class DebugWindow{
                 super.updateItem(item, empty);
                 if (item != null && !empty) {
                     setText(item);
-                    setFont(Font.font("Monospaced", 14));  // Setze Monospaced mit Schriftgröße 14
-                    setStyle("-fx-padding: 5px;");  // Fügt etwas Polsterung hinzu für besseren Abstand
+                    setFont(Font.font("Monospaced", 14));
+                    setStyle("-fx-padding: 5px;");
                 } else {
                     setText(null);
                 }
             }
         });
 
-
-        // Erstelle eine Szene für das Unterfenster
         StackPane subRoot = new StackPane();
         subRoot.getChildren().add(memoryListView);
         Scene subScene = new Scene(subRoot, 770, 500);
 
-        // Setze den Titel und die Szene für das Unterfenster
         memorySnapWindow.setTitle(windowName);
         memorySnapWindow.setResizable(false);
         memorySnapWindow.setScene(subScene);
@@ -242,9 +233,5 @@ public class DebugWindow{
         memorySnapWindow.setOnCloseRequest(event -> {
             memoryWindows.remove(memorySnapWindow);
         });
-    }
-
-    private void changeClockSpeed() {
-
     }
 }

@@ -61,9 +61,6 @@ public class PPU extends Canvas{
     }
 
     public boolean isDrawFlag(){
-        if(memory.read(0x000A) == 0x01){
-            return true;
-        }
-        return false;
+        return memory.read(0x000A) == 0x01;
     }
 }
